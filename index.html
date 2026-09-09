@@ -145,8 +145,29 @@
         });
       }
 
-      // Try to fetch directory listing, fallback to default assemblies
+      // GitHub Pages serves static files only (no directory listing), so discovery
+      // relies on a manifest generated at deploy time. Directory-listing parsing is
+      // kept as a fallback for local dev servers that do expose an index (e.g. autoindex).
       function discoverAssemblies() {
+        fetch(path + 'manifest.json')
+          .then(function(response) {
+            if (!response.ok) throw new Error('no manifest');
+            return response.json();
+          })
+          .then(function(list) {
+            if (list && list.length > 0) {
+              list.sort();
+              populateSelector(list);
+            } else {
+              discoverViaDirectoryListing();
+            }
+          })
+          .catch(function() {
+            discoverViaDirectoryListing();
+          });
+      }
+
+      function discoverViaDirectoryListing() {
         fetch(path)
           .then(function(response) { 
             if (!response.ok) throw new Error('not ok');
