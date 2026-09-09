@@ -97,7 +97,7 @@
       var queries = window.location.href.replace(/^.+\?/,'').split('&')
       var params = []
       params["path"] = ["json/"]
-      params["assembly"] = ["output"]
+      params["assembly"] = []
       params["view"] = ["circle"]
       params["altView"] = ["cumulative", "table"]
       queries.forEach(function(q){
@@ -114,7 +114,7 @@
 
       // Auto-discover available JSON files
       var allAssemblies = [];
-      var currentAssembly = assemblies[0];
+      var currentAssembly = null;
       var arr = [];
       var plot_container;
 
@@ -167,11 +167,11 @@
               foundAssemblies.sort();
               populateSelector(foundAssemblies);
             } else {
-              populateSelector([assemblies[0]]);
+              return;
             }
           })
           .catch(function() {
-            populateSelector([assemblies[0]]);
+            return;
           });
       }
       function populateSelector(assembliesList) {
